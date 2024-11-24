@@ -1,0 +1,50 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.sqlite3
+*.pyc
+*.pyo
+__pycache__/
+*.env
+
+# Node.js (React frontend)
+frontend/node_modules/
+frontend/.env
+frontend/build/
+frontend/.parcel-cache/
+frontend/.next/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Python (Flask backend)
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/env/
+backend/.env
+backend/.DS_Store
+backend/debug.log
+backend/*.sqlite3
+
+# Dataset folders
+backend/Dataset/bag
+backend/Dataset/cup
+backend/Dataset/lamp
+backend/Dataset/umbrella
+backend/Dataset/watch
+backend/Dataset/water-bottles
+backend/Dataset/sofa
+backend/Dataset/hat
+
+
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
