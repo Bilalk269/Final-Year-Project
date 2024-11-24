@@ -39,6 +39,8 @@ backend/Dataset/water bottles/
 backend/Dataset/sofa/
 backend/Dataset/hat/
 
+*.pkl
+
 
 
 
