@@ -30,14 +30,15 @@ backend/debug.log
 backend/*.sqlite3
 
 # Dataset folders
-backend/Dataset/bag
-backend/Dataset/cup
-backend/Dataset/lamp
-backend/Dataset/umbrella
-backend/Dataset/watch
-backend/Dataset/water-bottles
-backend/Dataset/sofa
-backend/Dataset/hat
+backend/Dataset/bag/
+backend/Dataset/cup/
+backend/Dataset/lamp/
+backend/Dataset/umbrella/
+backend/Dataset/watch/
+backend/Dataset/water bottles/
+backend/Dataset/sofa/
+backend/Dataset/hat/
+
 
 
 
