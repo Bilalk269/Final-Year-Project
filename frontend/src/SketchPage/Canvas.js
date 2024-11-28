@@ -1,5 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 
+// Global history for undo/redo functionality
+const globalHistory = [];
+let redoStack = [];
+
 const Canvas = ({
   tool,
   brushColor,
@@ -22,8 +26,8 @@ const Canvas = ({
 
     if (tool === "free") {
       const ctx = canvasRef.current.getContext("2d");
-      ctx.beginPath(); // Start a new path for freehand drawing
-      ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY); // Move to the starting point
+      ctx.beginPath();
+      ctx.moveTo(e.nativeEvent.offsetX, e.nativeEvent.offsetY);
     }
   };
 
@@ -35,7 +39,6 @@ const Canvas = ({
     const y = e.nativeEvent.offsetY;
 
     if (tool === "free") {
-      // Freehand drawing logic
       ctx.lineWidth = brushRadius;
       ctx.lineCap = "round";
       ctx.strokeStyle = brushColor;
@@ -44,9 +47,8 @@ const Canvas = ({
 
       setCurrentPoints((prevPoints) => [...prevPoints, { x, y }]);
     } else if (tool === "circle" || tool === "rectangle") {
-      // Shape preview logic
       ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-      redrawCanvas(ctx); // Redraw existing drawings
+      redrawCanvas(ctx);
 
       const width = x - startX;
       const height = y - startY;
@@ -55,13 +57,13 @@ const Canvas = ({
       ctx.lineWidth = brushRadius;
 
       if (tool === "circle") {
-        const radius = Math.sqrt(width * width + height * height); // Correct radius calculation
+        const radius = Math.sqrt(width ** 2 + height ** 2);
         ctx.beginPath();
         ctx.arc(startX, startY, radius, 0, Math.PI * 2);
         ctx.stroke();
       } else if (tool === "rectangle") {
         ctx.beginPath();
-        ctx.rect(startX, startY, width, height); // Correct width and height
+        ctx.rect(startX, startY, width, height);
         ctx.stroke();
       }
     }
@@ -74,16 +76,17 @@ const Canvas = ({
     const endX = e.nativeEvent.offsetX;
     const endY = e.nativeEvent.offsetY;
 
+    let newDrawing;
     if (tool === "free") {
-      const newFreehand = {
+      newDrawing = {
         tool: "free",
         points: currentPoints,
         color: brushColor,
         radius: brushRadius,
       };
-      setFreeDrawings([...freeDrawings, newFreehand]);
+      setFreeDrawings([...freeDrawings, newDrawing]);
     } else {
-      const newShape = {
+      newDrawing = {
         tool,
         startX,
         startY,
@@ -92,8 +95,12 @@ const Canvas = ({
         color: brushColor,
         radius: brushRadius,
       };
-      setShapeDrawings([...shapeDrawings, newShape]);
+      setShapeDrawings([...shapeDrawings, newDrawing]);
     }
+
+    // Add new drawing to global history
+    globalHistory.push(newDrawing);
+    redoStack = []; // Clear redo stack on new action
 
     setCurrentPoints([]);
     analyzeSketch();
@@ -122,8 +129,8 @@ const Canvas = ({
         ctx.lineWidth = drawing.radius;
         if (drawing.tool === "circle") {
           const radius = Math.sqrt(
-            Math.pow(drawing.endX - drawing.startX, 2) +
-              Math.pow(drawing.endY - drawing.startY, 2)
+            (drawing.endX - drawing.startX) ** 2 +
+            (drawing.endY - drawing.startY) ** 2
           );
           ctx.beginPath();
           ctx.arc(drawing.startX, drawing.startY, radius, 0, Math.PI * 2);
@@ -149,28 +156,69 @@ const Canvas = ({
   }, [freeDrawings, shapeDrawings, redrawCanvas]);
 
   const analyzeSketch = () => {
-    // Placeholder for analyzing the sketch and retrieving images.
     console.log("Sketch analysis placeholder.");
   };
 
+  // Undo functionality
+  const handleUndo = () => {
+    if (globalHistory.length > 0) {
+      const lastAction = globalHistory.pop();
+      redoStack.push(lastAction);
+      if (lastAction.tool === "free") {
+        setFreeDrawings(freeDrawings.slice(0, -1));
+      } else {
+        setShapeDrawings(shapeDrawings.slice(0, -1));
+      }
+    }
+  };
+
+  // Redo functionality
+  const handleRedo = () => {
+    if (redoStack.length > 0) {
+      const recoveredAction = redoStack.pop();
+      globalHistory.push(recoveredAction);
+      if (recoveredAction.tool === "free") {
+        setFreeDrawings([...freeDrawings, recoveredAction]);
+      } else {
+        setShapeDrawings([...shapeDrawings, recoveredAction]);
+      }
+    }
+  };
+
+  // Clear functionality
+  const handleClear = () => {
+    globalHistory.length = 0;
+    redoStack.length = 0;
+    setFreeDrawings([]);
+    setShapeDrawings([]);
+    const ctx = canvasRef.current.getContext("2d");
+    ctx.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+  };
+
   return (
-    <div style={{ display: "flex", justifyContent: "space-between", padding: "20px" }}>
-      {/* Canvas Area */}
-      <div style={{ flex: 1, position: "relative" }}>
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={600}
-          style={{
-            backgroundColor: "#f0f0f0",
-            border: "1px solid #ddd",
-            display: "block",
-          }}
-          onMouseDown={handleMouseDown}
-          onMouseUp={handleMouseUp}
-          onMouseMove={handleMouseMove}
-        />
+    <div>
+      <div style={{ marginBottom: "10px" }}>
+        <button onClick={handleUndo} disabled={globalHistory.length === 0}>
+          Undo
+        </button>
+        <button onClick={handleRedo} disabled={redoStack.length === 0}>
+          Redo
+        </button>
+        <button onClick={handleClear}>Clear</button>
       </div>
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={600}
+        style={{
+          border: "1px solid black",
+          backgroundColor: "#fff",
+        }}
+        onMouseDown={handleMouseDown}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={() => setIsDrawing(false)}
+      />
     </div>
   );
 };

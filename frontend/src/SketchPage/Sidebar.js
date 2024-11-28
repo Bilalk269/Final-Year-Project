@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const SidebarContainer = styled.div`
   position: absolute;
-  top: 50%;
+  top: 300px;
   left: 0;
   transform: translateY(-50%);
   display: flex;
@@ -46,9 +46,6 @@ const Sidebar = ({
   brushRadius,
   setBrushRadius,
   setTool,
-  handleUndo,
-  handleRedo,
-  handleClear,
   isOpen,
 }) => {
   return (
@@ -78,13 +75,6 @@ const Sidebar = ({
         <Button onClick={() => setTool("free")}>Free Draw</Button>
         <Button onClick={() => setTool("circle")}>Circle</Button>
         <Button onClick={() => setTool("rectangle")}>Rectangle</Button>
-      </ToolOption>
-
-      <ToolOption>
-        <label>Actions:</label>
-        <Button onClick={handleUndo}>Undo</Button>
-        <Button onClick={handleRedo}>Redo</Button>
-        <Button onClick={handleClear}>Clear</Button>
       </ToolOption>
     </SidebarContainer>
   );

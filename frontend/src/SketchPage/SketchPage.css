@@ -1,115 +1,152 @@
-/* SketchPage.css */
+/* Global Styles */
+body, html {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  font-family: Arial, sans-serif;
+}
 
 .container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    background: linear-gradient(to right, #ffffff 50%, #000000 50%); /* Half white and half black */
-  }
-  
-  .sidebar-toggle-btn {
-    position: absolute;
-    top: 100px; /* Adjusted to be below the header */
-    left: 10px;
-    padding: 10px;
-    cursor: pointer;
-    transition: transform 0.3s ease;
-    border: 2px solid #000000; /* Black border for consistency */
-    border-radius: 30px;
-    background-color: #000000; /* Black background */
-    color: white; /* White text color */
-  }
-  
-  .sidebar-toggle-btn:hover {
-    transform: scale(1.1);
-  }
-  
-  .main-content {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    width: 100%;
-    padding-top: 60px;
-  }
-  
-  .sidebar-container {
-    transition: transform 0.5s;
-  }
-  
-  .sidebar-open {
-    transform: translateX(0);
-  }
-  
-  .sidebar-closed {
-    transform: translateX(-100%);
-  }
-  
-  .image-container {
-    width: 200px;
-    padding-left: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .image-box {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 100%;
-    background-color: #ffffff;
-    padding: 10px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  .image-box img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-  
-  .image-box div {
-    text-align: center;
-    padding: 20px;
-    color: #ccc;
-  }
-  
-  .analyze-btn {
-    padding: 10px 30px;
-    background-color: white; /* White background */
-    color: black; /* Black text */
-    border: none;
-    border-radius: 30px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: transform 0.3s;
-  }
-  
-  .analyze-btn:hover {
-    transform: scale(1.1);
-  }
-  
-  .home-btn {
-    position: absolute;
-    top: 20px; /* Positioned at the top-right corner */
-    right: 20px;
-    padding: 12px 30px; /* Updated padding */
-    background-color: transparent; /* Transparent background */
-    border: 2px solid #ffffff; /* White border */
-    color: #ffffff; /* White text */
-    font-size: 1rem; /* Font size */
-    font-weight: 600; /* Bold text */
-    cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-    border-radius: 30px; /* Rounded button */
-  }
-  
-  .home-btn:hover {
-    background-color: #ffffff; /* White background on hover */
-    color: #1a1a1a; /* Dark text on hover */
-    border-color: #1a1a1a; /* Dark border on hover */
-    transform: scale(1.1); /* Button scaling on hover */
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1f1f1f, #292929, #383838);
+}
+
+/* Sidebar container styling */
+.sidebar-container {
+  position: fixed;
+  top: 350px; /* Shift sidebar vertically further down */
+  left: 0;
+  height: calc(100vh - 400px); /* Adjust height based on the new position */
+  width: 250px;
+  background: #292929;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+  transition: transform 0.5s ease-in-out;
+  z-index: 10; /* Ensure it appears above content */
+}
+
+/* Sidebar open/close animations */
+.sidebar-open {
+  transform: translateX(0); /* Fully visible */
+}
+
+.sidebar-closed {
+  transform: translateX(-100%); /* Fully hidden */
+}
+
+/* Sidebar toggle button styling (now inside the sidebar) */
+.sidebar-toggle-btn {
+  position: absolute; /* Position relative to the sidebar */
+  top: 95px; /* Align inside the sidebar at the top */
+  right: 1400px; /* Shift outside the sidebar boundary */
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  border: 2px solid #ffffff;
+  border-radius: 30px;
+  background-color: #ffffff;
+  color: #000;
+  font-size: 0.9rem;
+  font-weight: 600;
+  z-index: 11; /* Ensure button appears above sidebar */
+}
+
+.sidebar-toggle-btn:hover {
+  transform: scale(1.1); /* Hover effect */
+  background-color: #000;
+  color: #ffffff;
+}
+
+/* Main content styling */
+.main-content {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  width: 100%;
+  padding-top: 60px;
+  position: relative; /* Ensure content is not overlapped by fixed sidebar */
+}
+
+/* Center Canvas */
+.canvas-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center; /* Centers vertically */
+  width: 100%;
+  height: calc(100vh - 150px); /* Deduct header space */
+  margin: 20px 0; /* Add spacing around */
+  transform: translateX(70px); /* Moves the canvas 20px to the right */
+}
+
+/* Image container styling */
+.image-container {
+  display: flex;
+  flex-wrap: wrap; /* Allows multiple rows */
+  justify-content: center; /* Centers content horizontally */
+  gap: 10px; /* Reduced gap between boxes */
+  margin-top: 45px;
+  max-width: 230px; /* Adjusted width for better alignment */
+}
+
+.image-box-item {
+  background-color: #fff;
+  padding: 4px; /* Slightly smaller padding */
+  border-radius: 6px;
+  box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+  width: 90px; /* Reduced width */
+  height: 90px; /* Reduced height */
+}
+
+.image-box-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Analyze Button */
+.analyze-btn {
+  padding: 10px 30px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  border: 2px solid #ffffff;
+  border-radius: 30px;
+  background-color: #ffffff;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.analyze-btn:hover {
+  transform: scale(1.1);
+  background-color: #000;
+  color: #ffffff;
+}
+
+/* Home Button in Top Right Corner */
+.home-btn {
+  position: absolute;
+  top: 50px;
+  right: 20px;
+  padding: 12px 30px;
+  background-color: white;
+  border: 2px solid #000000;
+  color: #000000;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+  border-radius: 30px;
+}
+
+.home-btn:hover {
+  background-color: #000000;
+  color: #ffffff;
+  border-color: #ffffff;
+  transform: scale(1.1);
+}

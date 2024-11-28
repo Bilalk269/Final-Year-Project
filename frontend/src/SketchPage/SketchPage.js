@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Sidebar from './Sidebar';
 import Canvas from './Canvas';
 import { useNavigate } from 'react-router-dom';
-import './SketchPage.css';  // Import the CSS
+import './SketchPage.css'; // Import the CSS
 
 const SketchPage = () => {
   const [brushColor, setBrushColor] = useState("#000000");
@@ -12,7 +12,9 @@ const SketchPage = () => {
   const [shapeDrawings, setShapeDrawings] = useState([]);
   const [undoStack, setUndoStack] = useState([]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const [retrievedImages, setRetrievedImages] = useState([null, null, null, null, null]);
+  const [retrievedImages, setRetrievedImages] = useState(
+    new Array(10).fill('https://via.placeholder.com/100') // Placeholder images
+  );
 
   const navigate = useNavigate(); // Used for navigation
 
@@ -52,13 +54,7 @@ const SketchPage = () => {
   };
 
   const analyzeSketch = () => {
-    const retrieved = [
-      'https://via.placeholder.com/100',
-      'https://via.placeholder.com/100',
-      'https://via.placeholder.com/100',
-      'https://via.placeholder.com/100',
-      'https://via.placeholder.com/100',
-    ];
+    const retrieved = new Array(10).fill('https://via.placeholder.com/100');
     setRetrievedImages(retrieved);
   };
 
@@ -69,10 +65,7 @@ const SketchPage = () => {
   return (
     <div className="container">
       {/* Top button to open sidebar */}
-      <button
-        onClick={toggleSidebar}
-        className="sidebar-toggle-btn"
-      >
+      <button onClick={toggleSidebar} className="sidebar-toggle-btn">
         {isSidebarOpen ? 'Close Tools' : 'Open Tools'}
       </button>
 
@@ -91,43 +84,34 @@ const SketchPage = () => {
           className={isSidebarOpen ? 'sidebar-open' : 'sidebar-closed'}
         />
 
-        <Canvas
-          tool={tool}
-          brushColor={brushColor}
-          brushRadius={brushRadius}
-          freeDrawings={freeDrawings}
-          setFreeDrawings={setFreeDrawings}
-          shapeDrawings={shapeDrawings}
-          setShapeDrawings={setShapeDrawings}
-        />
+        {/* Centered Canvas */}
+        <div className="canvas-container">
+          <Canvas
+            tool={tool}
+            brushColor={brushColor}
+            brushRadius={brushRadius}
+            freeDrawings={freeDrawings}
+            setFreeDrawings={setFreeDrawings}
+            shapeDrawings={shapeDrawings}
+            setShapeDrawings={setShapeDrawings}
+          />
+        </div>
 
         <div className="image-container">
-          <div className="image-box">
-            {retrievedImages.map((image, index) => (
-              <div key={index} className="image-box-item">
-                {image ? (
-                  <img src={image} alt={`retrieved-${index}`} />
-                ) : (
-                  <div>No Image</div>
-                )}
-              </div>
-            ))}
-          </div>
+          {retrievedImages.map((image, index) => (
+            <div key={index} className="image-box-item">
+              <img src={image} alt={`retrieved-${index}`} />
+            </div>
+          ))}
 
-          <button
-            onClick={analyzeSketch}
-            className="analyze-btn"
-          >
+          <button onClick={analyzeSketch} className="analyze-btn">
             Analyze Sketch
           </button>
         </div>
       </div>
 
       {/* Home Button in Top Right Corner */}
-      <button
-        onClick={handleReturnHome}
-        className="home-btn"
-      >
+      <button onClick={handleReturnHome} className="home-btn">
         Home
       </button>
     </div>
