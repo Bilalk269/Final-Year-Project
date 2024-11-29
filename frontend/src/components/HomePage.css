@@ -1,5 +1,4 @@
-/* HomePage.css */
-
+/* Global Styles */
 body, html {
   margin: 0;
   padding: 0;
@@ -52,80 +51,57 @@ body, html {
   z-index: 1; /* Logo is in the back layer */
 }
 
-/* Buttons in each section */
+/* Buttons Container */
 .button-group {
   margin-top: 20px;
-}
-
-.sketch-button, .upload-button {
-  margin: 5px;
-  padding: 15px 30px;
-  background-color: transparent;
-  color: #ffffff;
-  border: 2px solid #ffffff;
-  cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 30px; /* Rounded button */
-  font-weight: bold;
-  position: relative;
-  z-index: 2; /* Button is in the top layer */
-}
-
-.sketch-button:hover, .upload-button:hover {
-  background-color: #ffffff;
-  color: #1a1a1a;
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-/* Ensure buttons have different styles for each section */
-.left-section .sketch-button, .left-section .upload-button {
-  background-color: #1a1a1a;
-  color: #ffffff;
-}
-
-.right-section .sketch-button, .right-section .upload-button {
-  background-color: #ffffff;
-  color: #1a1a1a;
-}
-
-/* Navigation */
-nav {
-  position: absolute;
-  top: 20px;
-  right: 20px;
   display: flex;
-  gap: 15px;
-  animation: slideIn 1s ease-in-out;
+  flex-direction: row; /* Align buttons horizontally */
+  justify-content: center; /* Center the buttons horizontally */
+  gap: 20px; /* Add spacing between buttons */
 }
 
-.nav-link {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 1rem;
-  font-weight: 600;
-}
-
-.nav-button {
-  padding: 12px 20px;
-  background-color: transparent;
-  border: 2px solid #ffffff;
-  color: #ffffff;
-  font-size: 1rem;
-  font-weight: 600;
+/* Sketch and Upload Image Button Animation */
+.sketch-button, .upload-img-button {
+  padding: 10px 30px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 30px;
   cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
-  border-radius: 30px; /* Rounded button */
-}
-
-.nav-button:hover {
+  margin-top: 15px;
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease;
+  border: 2px solid #ffffff;
+  border-radius: 30px;
   background-color: #ffffff;
-  color: #1a1a1a;
-  border-color: #1a1a1a;
-  transform: scale(1.1);
+  font-size: 0.9rem;
+  font-weight: 600;
 }
 
-/* Coming soon section */
+/* Hover Effect for Buttons */
+.sketch-button:hover, .upload-img-button:hover {
+  transform: scale(1.1);
+  background-color: #000;
+  color: #ffffff;
+}
+
+/* Ensure Buttons Are Styled Identically in Left Section Only */
+.left-section .sketch-button, .left-section .upload-img-button {
+  background-color: #ffffff; /* Light background color */
+  border: 2px solid #000000; /* Black border */
+  color: #000000; /* Black text color */
+  transform: scale(1.05);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Hover Effect for Buttons Inside Left Section */
+.left-section .sketch-button:hover, .left-section .upload-img-button:hover {
+  transform: scale(1.1); /* Slight scale effect */
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text color */
+  border-color: #ffffff; /* White border on hover */
+}
+
+/* Coming Soon Section */
 .coming-soon h2 {
   font-family: "Times New Roman", serif; /* Changed font */
   font-size: 3rem; /* Increased font size */
@@ -136,22 +112,26 @@ nav {
 .coming-soon h2 span {
   display: block; /* Make "ARE COMING" appear on the next line */
 }
-
-/* Learn more button */
+/* Learn More Button */
 .learn-more-button {
   padding: 12px 30px;
-  background-color: #ffffff;
-  color: #1a1a1a;
-  border: none;
+  background-color: #ffffff; /* White background */
+  color: #1a1a1a; /* Black text */
+  border: 2px solid #1a1a1a; /* Black border */
   cursor: pointer;
-  transition: transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
-  border-radius: 30px; /* Rounded button */
+  transition: transform 0.3s ease, background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; /* Added border color transition */
+  border-radius: 30px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  margin-top: 20px;
 }
 
+/* Hover Effect for Learn More Button */
 .learn-more-button:hover {
-  background-color: #dddddd;
-  transform: scale(1.05);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transform: scale(1.1); /* Slight scale effect */
+  background-color: #000000; /* Black background */
+  color: #ffffff; /* White text */
+  border-color: #ffffff; /* White border on hover */
 }
 
 /* Animations */
