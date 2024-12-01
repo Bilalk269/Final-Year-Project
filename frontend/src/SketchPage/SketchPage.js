@@ -50,12 +50,47 @@ const SketchPage = () => {
   };
 
   const toggleSidebar = () => {
-    setSidebarOpen(prevState => !prevState);
+    setSidebarOpen((prevState) => !prevState);
   };
 
   const analyzeSketch = () => {
-    const retrieved = new Array(10).fill('https://via.placeholder.com/100');
-    setRetrievedImages(retrieved);
+    const canvas = document.querySelector("canvas");
+
+    if (!canvas) return;
+
+    // Convert canvas to Blob (image file)
+    canvas.toBlob(async (blob) => {
+      if (!blob) return;
+
+      const formData = new FormData();
+      formData.append("file", blob, "sketch.png");
+
+      try {
+        // Send to backend
+        const response = await fetch("http://localhost:5000/analyze", {
+          method: "POST",
+          body: formData,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to analyze the sketch.");
+        }
+
+        const result = await response.json();
+        console.log(result);
+
+        // Update retrievedImages with images received from the backend
+        const imageUrls = result.images || []; // Ensure result.images is an array
+        setRetrievedImages((prevImages) =>
+          imageUrls.length
+            ? imageUrls
+            : prevImages.map(() => 'https://via.placeholder.com/100') // Default placeholder if no images are received
+        );
+      } catch (error) {
+        console.error("Error analyzing sketch:", error);
+        alert("Failed to analyze sketch. Please try again.");
+      }
+    });
   };
 
   const handleReturnHome = () => {
@@ -97,13 +132,13 @@ const SketchPage = () => {
           />
         </div>
 
+        {/* Image Retrieval Section */}
         <div className="image-container">
           {retrievedImages.map((image, index) => (
             <div key={index} className="image-box-item">
               <img src={image} alt={`retrieved-${index}`} />
             </div>
           ))}
-
           <button onClick={analyzeSketch} className="analyze-btn">
             Analyze Sketch
           </button>

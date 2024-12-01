@@ -156,6 +156,7 @@ const Canvas = ({
   }, [freeDrawings, shapeDrawings, redrawCanvas]);
 
   const analyzeSketch = () => {
+    // Placeholder function for sketch analysis logic
     console.log("Sketch analysis placeholder.");
   };
 

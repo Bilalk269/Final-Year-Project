@@ -52,7 +52,7 @@ function UploadPage() {
           className="upload-button"
           onClick={() => document.getElementById('file-input').click()}
         >
-          Upload Image
+          Choose Image file
         </button>
         <input
           id="file-input"
