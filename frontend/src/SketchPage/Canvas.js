@@ -12,6 +12,7 @@ const Canvas = ({
   setFreeDrawings,
   shapeDrawings,
   setShapeDrawings,
+  setCanvasBase64, // Function to send Base64 string to parent
 }) => {
   const canvasRef = useRef(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -160,6 +161,15 @@ const Canvas = ({
     console.log("Sketch analysis placeholder.");
   };
 
+  // Function to output canvas as Base64
+  const getCanvasBase64 = () => {
+    const canvas = canvasRef.current;
+    if (canvas) {
+      const base64Image = canvas.toDataURL("image/png");
+      setCanvasBase64(base64Image); // Send the Base64 image to the parent component
+    }
+  };
+
   // Undo functionality
   const handleUndo = () => {
     if (globalHistory.length > 0) {
@@ -206,6 +216,7 @@ const Canvas = ({
           Redo
         </button>
         <button onClick={handleClear}>Clear</button>
+        <button onClick={getCanvasBase64}>Get Canvas Base64</button> {/* Button to trigger Base64 conversion */}
       </div>
       <canvas
         ref={canvasRef}
