@@ -4,7 +4,7 @@ import Canvas from './Canvas';
 import { useNavigate } from 'react-router-dom';
 import './SketchPage.css'; // Import the CSS
 
-const SketchPage = async () => {
+const SketchPage = () => {  // Removed 'async' here
   const [brushColor, setBrushColor] = useState("#000000");
   const [brushRadius, setBrushRadius] = useState(5);
   const [tool, setTool] = useState("free");
@@ -56,31 +56,31 @@ const SketchPage = async () => {
 
   const analyzeSketch = async () => {
     if (!canvasBase64) return; // If no Base64, return early
-
+    console.log(canvasBase64)
     const formData = new FormData();
-    formData.append("image", canvasBase64, "sketch.png");
-
+    formData.append("image", canvasBase64);
+    console.log(formData)
+    
     try {
-      // Send to backend
-      const response = await fetch("http://localhost:5000/analyze", {
+      const response = await fetch("http://localhost:5000/find_similar", {
         method: "POST",
         body: formData,
       });
-
+  
       if (!response.ok) {
         throw new Error("Failed to analyze the sketch.");
       }
-
+  
       const result = await response.json();
       console.log(result);
-
-      // Update retrievedImages with images received from the backend
-      const imageUrls = result.images || []; // Ensure result.images is an array
-      setRetrievedImages((prevImages) =>
-        imageUrls.length
-          ? imageUrls
-          : prevImages.map(() => 'https://via.placeholder.com/100') // Default placeholder if no images are received
-      );
+  
+      // Update retrievedImages with Base64 images received from the backend
+      if (result.similar_images) {
+        const imageUrls = result.similar_images.map(item => `data:image/png;base64,${item.image}`);
+        setRetrievedImages(imageUrls);
+      } else {
+        setRetrievedImages(new Array(10).fill('https://via.placeholder.com/100'));
+      }
     } catch (error) {
       console.error("Error analyzing sketch:", error);
       alert("Failed to analyze sketch. Please try again.");

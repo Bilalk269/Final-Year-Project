@@ -166,7 +166,7 @@ const Canvas = ({
     const canvas = canvasRef.current;
     if (canvas) {
       const base64Image = canvas.toDataURL("image/png");
-      setCanvasBase64(base64Image); // Send the Base64 image to the parent component
+      setCanvasBase64(base64Image.split(",")[1]); // Send the Base64 image to the parent component
     }
   };
 

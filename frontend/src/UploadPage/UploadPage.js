@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './UploadPage.css';
 
@@ -6,82 +6,100 @@ function UploadPage() {
   const [uploadedImage, setUploadedImage] = useState(null);
   const [retrievedImages, setRetrievedImages] = useState([]);
   const [sketchImage, setSketchImage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [loading, setLoading] = useState(false);  // Single loading state for both actions
   const navigate = useNavigate();
 
-  // Handle Image Upload
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setUploadedImage(imageUrl);
+    if (file && file.type.startsWith('image/')) {
+      setUploadedImage(file);
       setRetrievedImages([]);
       setSketchImage(null);
+      setErrorMessage('');
+    } else {
+      setErrorMessage('Please upload a valid image file.');
     }
   };
 
-  // Fetch Retrieved Images for Analyze
   const handleAnalyze = async () => {
     if (!uploadedImage) {
-      console.error('No image uploaded for analysis.');
+      setErrorMessage('No image uploaded for analysis.');
       return;
     }
-
+    
+    setLoading(true);
+    setErrorMessage('');
+    
     const formData = new FormData();
     formData.append('image', uploadedImage);
-
     try {
-      const response = await fetch('YOUR_ANALYZE_API_ENDPOINT', {
+      const response = await fetch('http://127.0.0.1:5000/find_similar', {
         method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
         const data = await response.json();
-        let images = data.images || []; // Expecting an array of image URLs
-
-        // Ensure there are exactly 10 images (pad with placeholders if needed)
-        const placeholder = 'https://via.placeholder.com/224';
-        images = [...images.slice(0, 10), ...Array(10 - images.length).fill(placeholder)];
-        setRetrievedImages(images);
+        const decodedImages = data.similar_images.map(
+          (image) => "data:image/jpg;base64," + image.image
+        );
+        setRetrievedImages(decodedImages);
       } else {
-        console.error('Failed to analyze image:', response.statusText);
+        setErrorMessage('Failed to analyze image. Please try again.');
       }
     } catch (error) {
-      console.error('Error during analysis:', error);
+      setErrorMessage('Error during analysis: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Convert Uploaded Image to Sketch
   const handleImageToSketch = async () => {
     if (!uploadedImage) {
-      console.error('No image uploaded for conversion.');
+      setErrorMessage('No image uploaded for conversion.');
       return;
     }
 
+    setLoading(true);
+    setErrorMessage('');
+
     const formData = new FormData();
     formData.append('image', uploadedImage);
-
     try {
-      const response = await fetch('YOUR_CONVERSION_API_ENDPOINT', {
+      const response = await fetch('http://127.0.0.1:5000/sketch', {
         method: 'POST',
         body: formData,
       });
 
       if (response.ok) {
-        const data = await response.blob(); // Expecting a sketch image blob
-        const sketchUrl = URL.createObjectURL(data);
-        setSketchImage(sketchUrl);
+        const data = await response.json();
+        const sketchImage = "data:image/jpg;base64," + data.sketch;
+        setSketchImage(sketchImage);
       } else {
-        console.error('Failed to convert image to sketch:', response.statusText);
+        setErrorMessage('Failed to convert image to sketch. Please try again.');
       }
     } catch (error) {
-      console.error('Error during sketch conversion:', error);
+      setErrorMessage('Error during sketch conversion: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Navigate back to Home
+  useEffect(() => {
+    return () => {
+      if (uploadedImage) {
+        URL.revokeObjectURL(uploadedImage);
+      }
+    };
+  }, [uploadedImage]);
+
   const handleReturnHome = () => {
     navigate('/');
+  };
+
+  const getUploadedImageURL = () => {
+    return URL.createObjectURL(uploadedImage);
   };
 
   return (
@@ -102,16 +120,26 @@ function UploadPage() {
           className="file-input"
         />
 
+        {errorMessage && <div className="error-message">{errorMessage}</div>}
+
         {uploadedImage && (
           <div className="preview-container">
             <h2 className="preview-title">Preview</h2>
-            <img src={uploadedImage} alt="Uploaded" className="preview-image" />
+            <img src={getUploadedImageURL()} alt="Uploaded" className="preview-image" />
             <div className="action-buttons">
-              <button className="analyze-butn" onClick={handleAnalyze}>
-                Analyze
+              <button 
+                className="analyze-btn" 
+                onClick={handleAnalyze} 
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Analyze'}
               </button>
-              <button className="convert-btn" onClick={handleImageToSketch}>
-                Convert to Sketch
+              <button 
+                className="convert-btn" 
+                onClick={handleImageToSketch} 
+                disabled={loading}
+              >
+                {loading ? 'Processing...' : 'Convert to Sketch'}
               </button>
             </div>
           </div>

@@ -30,16 +30,17 @@ backend/debug.log
 backend/*.sqlite3
 
 # Dataset folders
-backend/Dataset/bag/
-backend/Dataset/cup/
-backend/Dataset/lamp/
-backend/Dataset/umbrella/
-backend/Dataset/watch/
-backend/Dataset/water bottles/
-backend/Dataset/sofa/
-backend/Dataset/hat/
+backend/model/Dataset/bag/
+backend/model/Dataset/cup/
+backend/model/Dataset/lamp/
+backend/model/Dataset/umbrella/
+backend/model/Dataset/watch/
+backend/model/Dataset/water bottles/
+backend/model/Dataset/sofa/
+backend/model/Dataset/hat/
 
 *.pkl
+.keras
 
 
 
