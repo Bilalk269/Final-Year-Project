@@ -1,0 +1,63 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+*.sqlite3
+*.pyc
+*.pyo
+__pycache__/
+*.env
+
+# Node.js (React frontend)
+frontend/node_modules/
+frontend/.env
+frontend/build/
+frontend/.parcel-cache/
+frontend/.next/
+frontend/npm-debug.log*
+frontend/yarn-debug.log*
+frontend/yarn-error.log*
+
+# Python (Flask backend)
+backend/venv/
+backend/__pycache__/
+backend/*.pyc
+backend/*.pyo
+backend/env/
+backend/.env
+backend/.DS_Store
+backend/debug.log
+backend/*.sqlite3
+
+# Dataset folders
+backend/static/Dataset/bag/
+backend/static/Dataset/cup/
+backend/static/Dataset/lamp/
+backend/static/Dataset/umbrella/
+backend/static/Dataset/watch/
+backend/static/Dataset/water bottles/
+backend/static/Dataset/sofa/
+backend/static/Dataset/hat/
+
+train model/Dataset/bag/
+train model/Dataset/cup/
+train model/Dataset/lamp/
+train model/Dataset/umbrella/
+train model/Dataset/watch/
+train model/Dataset/water bottles/
+train model/Dataset/sofa/
+train model/Dataset/hat/
+
+*.pkl
+.keras
+
+
+
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.orig
+*.swp
+*.swo
