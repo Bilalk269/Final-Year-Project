@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  /* height: 100vh; */
+  background-image: url('./components/sketch.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.App {
+  position: relative;
+  /* height: 110vh; */
+}
+
+
+
+.header {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-align: center;
+}
+
+
+
+
+
+
