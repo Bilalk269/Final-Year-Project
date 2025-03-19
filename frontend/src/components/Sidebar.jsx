@@ -3,7 +3,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "./Sidebar.css";
-import sketchItLogo from "/assets/pic.jpg";
+import sketchItLogo from "/assets/logo1.png";
 
 function Sidebar() {
   const menuItems = [

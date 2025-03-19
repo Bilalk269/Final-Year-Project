@@ -1,7 +1,7 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from './pages/Home Page';  
-import SketchPage from './pages/Skectch Page';  
+import SketchPage from './pages/SkectchPage';  
 import UploadPage from './pages/Upload Page';
 
 const App = () => {
