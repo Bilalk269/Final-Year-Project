@@ -1,0 +1,47 @@
+/* Generate Text Page Specific Styles */
+.generate-btn {
+    background-color: #00b894;
+    color: white;
+    padding: 0.75rem 2rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    width: 100%;
+    margin-top: 1rem;
+  }
+  
+  .generate-btn:hover {
+    background-color: #00a884;
+    transform: translateY(-2px);
+  }
+  
+  .generate-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none !important;
+  }
+  
+  .text-result-card {
+    background-color: var(--darker-color);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    padding: 1rem;
+    border: 1px solid var(--gray-color);
+    height: 100%;
+  }
+  
+  .text-content {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: var(--border-radius);
+    min-height: 200px;
+  }
+  
+  .generated-text {
+    color: var(--light-color);
+    line-height: 1.6;
+    white-space: pre-wrap;
+  }

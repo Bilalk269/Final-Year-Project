@@ -1,0 +1,229 @@
+/* ===== SKETCH PAGE LAYOUT ===== */
+.sketch-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--dark-color);
+}
+
+.sketch-main {
+  display: flex;
+  flex: 1;
+  padding: 2rem;
+  gap: 2rem;
+  margin-top: 60px;
+}
+
+/* Left Toolbox */
+.toolbox-section {
+  flex: 0 0 220px; /* Fixed width */
+  position: sticky;
+  top: 80px;
+  align-self: flex-start;
+}
+
+.toolbox {
+  background-color: var(--darker-color);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border: 1px solid var(--gray-color);
+  box-shadow: var(--box-shadow);
+  height: 100%;
+}
+
+.toolbox-title {
+  color: var(--accent-color);
+  margin-bottom: 1.5rem;
+  font-size: 1.2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--gray-color);
+}
+
+.tool-group {
+  margin-bottom: 1.5rem;
+}
+
+.tool-label {
+  display: block;
+  font-size: 0.9rem;
+  color: var(--light-color);
+  margin-bottom: 0.5rem;
+}
+
+.color-picker {
+  width: 100%;
+  height: 40px;
+  cursor: pointer;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--gray-color);
+  background: var(--darker-color);
+}
+
+.brush-slider {
+  width: 100%;
+  cursor: pointer;
+  accent-color: var(--accent-color);
+}
+
+.tool-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--gray-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+.tool-btn:hover {
+  background-color: #3a3a3a;
+}
+
+.clear-btn {
+  background-color: var(--warning-color);
+}
+
+.clear-btn:hover {
+  background-color: #e63946;
+}
+
+/* Canvas Section */
+.canvas-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.canvas-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.drawing-canvas {
+  background-color: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  border: 1px solid var(--gray-color);
+  cursor: crosshair;
+  width: 650px;
+  height: 650px;
+}
+
+.analyze-btn {
+  padding: 0.75rem 2rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+}
+
+.analyze-btn:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+}
+
+/* Results Section */
+.results-section {
+  flex: 1;
+  max-width: 500px;
+}
+  
+  .section-title {
+    color: var(--light-color);
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+  }
+  
+  .image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 2fr));
+    gap: 1rem;
+  }
+  
+  .image-card {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    background-color: var(--darker-color);
+    border: 1px solid var(--gray-color);
+  }
+  
+  .image-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: var(--transition);
+  }
+  
+  .image-card img:hover {
+    transform: scale(1.05);
+  }
+  
+  .analyze-btn {
+    padding: 0.75rem 2rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+  }
+  
+  .analyze-btn:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+  }
+  
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--darker-color);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--gray-color);
+    color: #888;
+  }
+  
+  .empty-icon {
+    margin-bottom: 1rem;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 1024px) {
+    .sketch-main {
+      flex-direction: column;
+    }
+    
+    .canvas-container,
+    .results-section {
+      max-width: 100%;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .toolbox {
+      flex-direction: column;
+    }
+    
+    .drawing-canvas {
+      width: 100%;
+      height: auto;
+    }
+  }

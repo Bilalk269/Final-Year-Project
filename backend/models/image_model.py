@@ -42,7 +42,7 @@ def find_similar_images(input_features,THRESHOLD):
         with open(image_file_path, 'rb') as f:
             encoded_image = base64.b64encode(f.read()).decode('utf-8')
         similar_images.append({
-           # "image": encoded_image,
+            "image": encoded_image,
             "similarity": float(similarities[idx])
         })
     return {"similar_images": similar_images}
