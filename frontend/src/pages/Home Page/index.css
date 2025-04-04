@@ -156,3 +156,27 @@ body, html {
       font-size: 1.5rem; /* Adjust text size */
   }
 }
+
+/* Animation styles */
+.logo-main {
+  transition: transform 0.3s ease;
+}
+
+.sketch-button, .upload-img-button {
+  transition: all 0.3s ease;
+}
+
+.coming-soon h2 span {
+  display: inline-block;
+}
+
+/* Add these if not already present */
+.homepage {
+  overflow: hidden;
+}
+
+.button-group {
+  display: flex;
+  gap: 20px;
+  margin-top: 30px;
+}

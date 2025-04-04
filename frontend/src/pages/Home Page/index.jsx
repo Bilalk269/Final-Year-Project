@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import './index.css';
 import sketchItLogo from "/assets/Sketchit.jpg";
 
@@ -11,29 +12,98 @@ function HomePage() {
     }
   }, []);
 
+  // Animation variants
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.8, staggerChildren: 0.2 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { y: 20, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: { duration: 0.6 }
+    }
+  };
+
+  const buttonVariants = {
+    hover: { 
+      scale: 1.05,
+      transition: { 
+        duration: 0.3,
+        yoyo: Infinity,
+        ease: "easeOut"
+      }
+    },
+    tap: { scale: 0.95 }
+  };
+
+  const pulseVariants = {
+    animate: {
+      scale: [1, 1.03, 1],
+      transition: {
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  };
+
   return (
-    <div className="homepage">
+    <motion.div 
+      className="homepage"
+      initial="hidden"
+      animate="visible"
+      variants={containerVariants}
+    >
       {/* Left Section */}
-      <div className="left-section">
-        <img src={sketchItLogo} alt="Sketch It Logo" className="logo-main" />
+      <motion.div className="left-section" variants={itemVariants}>
+        <motion.img 
+          src={sketchItLogo} 
+          alt="Sketch It Logo" 
+          className="logo-main"
+          whileHover={{ rotate: [0, -5, 5, -5, 0] }}
+          transition={{ duration: 0.8 }}
+        />
         <div className="button-group">
           <Link to="/sketch">
-            <button className="sketch-button">Sketch</button>
+            <motion.button 
+              className="sketch-button"
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Sketch
+            </motion.button>
           </Link>
           <Link to="/upload-img">
-            <button className="upload-img-button">Upload Image</button>
+            <motion.button 
+              className="upload-img-button"
+              variants={buttonVariants}
+              whileHover="hover"
+              whileTap="tap"
+            >
+              Upload Image
+            </motion.button>
           </Link>
         </div>
-      </div>
+      </motion.div>
 
       {/* Right Section */}
-      <div className="right-section">
-        <div className="coming-soon">
+      <motion.div className="right-section" variants={itemVariants}>
+        <motion.div 
+          className="coming-soon"
+          variants={pulseVariants}
+          animate="animate"
+        >
           <h2>GREAT THINGS ARE COMING</h2>
-          {/*<button className="learn-more-button">Learn More</button>*/}
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 }
 
