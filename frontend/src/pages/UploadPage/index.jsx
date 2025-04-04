@@ -12,6 +12,16 @@ function UploadPage() {
   const [loadingAction, setLoadingAction] = useState("");
   const navigate = useNavigate();
 
+  // Download image function
+  const downloadImage = (imageUrl, filename = 'retrieved-image') => {
+    const link = document.createElement('a');
+    link.href = imageUrl;
+    link.download = `${filename}-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const handleImageUpload = (event) => {
     const file = event.target.files[0];
     if (file && file.type.startsWith("image/")) {
@@ -49,7 +59,8 @@ function UploadPage() {
         setErrorMessage(data.message);
       } else {
         const decodedImages = data.similar_images.map((image) => ({
-          url: "data:image/png;base64," + image.image
+          url: "data:image/png;base64," + image.image,
+          similarity: image.similarity
         }));
         setRetrievedImages(decodedImages);
       }
@@ -108,9 +119,11 @@ function UploadPage() {
           <h1 className="logo" onClick={handleReturnHome}>Sketch It</h1>
           <nav className="nav-links">
             <button className="nav-btn" onClick={handleReturnHome}>Home</button>
-            <button className="nav-btn active">Upload Image</button>
             <button className="nav-btn" onClick={handleDrawsketch}>Draw Sketch</button>
+            <button className="nav-btn active">Upload Image</button>
             <button className="nav-btn" onClick={() => navigate('/generate_text')}>Generate Description</button>
+            <button className="nav-btn" onClick={() => navigate('/edit_image')}>Edit Image</button>
+
           </nav>
         </div>
       </header>
@@ -173,6 +186,12 @@ function UploadPage() {
               <h2 className="result-title">Sketch Result</h2>
               <div className="result-content">
                 <img src={sketchImage} alt="Sketch result" className="result-image" />
+                <button 
+                  className="download-btn sketch-download"
+                  onClick={() => downloadImage(sketchImage, 'sketch-result')}
+                >
+                  Download Sketch
+                </button>
               </div>
             </div>
           )}
@@ -183,11 +202,31 @@ function UploadPage() {
               <div className="image-grid">
                 {retrievedImages.map((image, index) => (
                   <div key={index} className="image-box">
-                    <img
-                      src={image.url}
-                      alt={`Retrieved ${index + 1}`}
-                      className="retrieved-image"
-                    />
+                    <div className="image-container">
+                      <img
+                        src={image.url}
+                        alt={`Retrieved ${index + 1}`}
+                        className="retrieved-image"
+                      />
+                      <div className="image-overlay">
+                        <span className="similarity-badge">
+                          {Math.round(image.similarity * 100)}% match
+                        </span>
+                        <button 
+                          className="download-btn"
+                          onClick={() => downloadImage(image.url, `similar-image-${index+1}`)}
+                          title="Download image"
+                        >
+                          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M12 15V3M12 15L8 11M12 15L16 11M21 15V19C21 20.1046 20.1046 21 19 21H5C3.89543 21 3 20.1046 3 19V15" 
+                                  stroke="currentColor" 
+                                  strokeWidth="2" 
+                                  strokeLinecap="round" 
+                                  strokeLinejoin="round"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 ))}
               </div>

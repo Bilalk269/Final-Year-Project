@@ -56,7 +56,11 @@ function GenerateTextPage() {
   };
 
   const handleUploadImage = () => {
-    navigate("/upload");
+    navigate("/upload-img");
+  };
+
+  const EditImage = () => {
+    navigate("/edit_image");
   };
 
   return (
@@ -66,9 +70,11 @@ function GenerateTextPage() {
           <h1 className="logo" onClick={handleReturnHome}>Sketch It</h1>
           <nav className="nav-links">
             <button className="nav-btn" onClick={handleReturnHome}>Home</button>
-            <button className="nav-btn" onClick={handleUploadImage}>Upload Image</button>
             <button className="nav-btn" onClick={handleDrawSketch}>Draw Sketch</button>
-            <button className="nav-btn active">Generate Text</button>
+            <button className="nav-btn" onClick={handleUploadImage}>Upload Image</button>
+            <button className="nav-btn active">Generate Description</button>
+            <button className="nav-btn" onClick={EditImage}>Edit Image</button>
+            
           </nav>
         </div>
       </header>

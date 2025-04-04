@@ -45,6 +45,7 @@ def find_similar_images(input_features,THRESHOLD):
             "image": encoded_image,
             "similarity": float(similarities[idx])
         })
+    #print(similar_images'image')
     return {"similar_images": similar_images}
 
 def convert_to_sketch(image: Image.Image):
