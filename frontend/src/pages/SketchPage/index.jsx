@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './index.css';
 
@@ -12,6 +12,16 @@ const SketchPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+
+  // Initialize canvas
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }, []);
 
   const handleMouseDown = (e) => {
     const canvas = canvasRef.current;
@@ -19,121 +29,160 @@ const SketchPage = () => {
     const startX = e.nativeEvent.offsetX;
     const startY = e.nativeEvent.offsetY;
 
+    setStartPos({ x: startX, y: startY });
+    setIsDrawing(true);
+
     ctx.strokeStyle = isErasing ? '#FFFFFF' : color;
+    ctx.fillStyle = isErasing ? '#FFFFFF' : color;
     ctx.lineWidth = brushSize;
     ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
 
     if (shape === 'freehand') {
       ctx.beginPath();
       ctx.moveTo(startX, startY);
-      
-      const draw = (event) => {
-        ctx.lineTo(event.offsetX, event.offsetY);
-        ctx.stroke();
-      };
+    }
+  };
 
-      const stopDrawing = () => {
-        canvas.removeEventListener('mousemove', draw);
-        canvas.removeEventListener('mouseup', stopDrawing);
-      };
+  const handleMouseMove = (e) => {
+    if (!isDrawing) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const currentX = e.nativeEvent.offsetX;
+    const currentY = e.nativeEvent.offsetY;
 
-      canvas.addEventListener('mousemove', draw);
-      canvas.addEventListener('mouseup', stopDrawing);
+    if (shape === 'freehand') {
+      ctx.lineTo(currentX, currentY);
+      ctx.stroke();
     } else {
-      const handleMouseUp = (event) => {
-        const endX = event.offsetX;
-        const endY = event.offsetY;
-        const width = endX - startX;
-        const height = endY - startY;
+      // For shapes, we'll redraw on mouse up
+      // Clear and redraw temporarily during mouse move for preview
+      const tempCanvas = document.createElement('canvas');
+      tempCanvas.width = canvas.width;
+      tempCanvas.height = canvas.height;
+      const tempCtx = tempCanvas.getContext('2d');
+      tempCtx.drawImage(canvas, 0, 0);
+      
+      tempCtx.strokeStyle = isErasing ? '#FFFFFF' : color;
+      tempCtx.fillStyle = isErasing ? '#FFFFFF' : color;
+      tempCtx.lineWidth = brushSize;
+      tempCtx.lineCap = 'round';
+      tempCtx.lineJoin = 'round';
 
-        switch (shape) {
-          case 'rectangle':
-            ctx.strokeRect(startX, startY, width, height);
-            break;
-          case 'circle':
-            ctx.beginPath();
-            const radius = Math.sqrt(width ** 2 + height ** 2);
-            ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
-            ctx.stroke();
-            break;
-          case 'line':
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(endX, endY);
-            ctx.stroke();
-            break;
-          case 'arrow': {
-            // Draw line
-            ctx.beginPath();
-            ctx.moveTo(startX, startY);
-            ctx.lineTo(endX, endY);
-            ctx.stroke();
-            // Draw arrowhead
-            const angle = Math.atan2(endY - startY, endX - startX);
-            const headLength = 10;
-            ctx.beginPath();
-            ctx.moveTo(endX, endY);
-            ctx.lineTo(endX - headLength * Math.cos(angle - Math.PI / 6), endY - headLength * Math.sin(angle - Math.PI / 6));
-            ctx.lineTo(endX - headLength * Math.cos(angle + Math.PI / 6), endY - headLength * Math.sin(angle + Math.PI / 6));
-            ctx.lineTo(endX, endY);
-            ctx.lineTo(endX - headLength * Math.cos(angle - Math.PI / 6), endY - headLength * Math.sin(angle - Math.PI / 6));
-            ctx.stroke();
-            break;
-          }
-          case 'polygon': {
-            const sides = 5;
-            const centerX = startX;
-            const centerY = startY;
-            const polyRadius = Math.sqrt(width ** 2 + height ** 2);
-            ctx.beginPath();
-            for (let i = 0; i < sides; i++) {
-              const theta = (2 * Math.PI / sides) * i - Math.PI / 2;
-              const x = centerX + polyRadius * Math.cos(theta);
-              const y = centerY + polyRadius * Math.sin(theta);
-              if (i === 0) {
-                ctx.moveTo(x, y);
-              } else {
-                ctx.lineTo(x, y);
-              }
-            }
-            ctx.closePath();
-            ctx.stroke();
-            break;
-          }
-          case 'star': {
-            const points = 5;
-            const outerRadius = Math.sqrt(width ** 2 + height ** 2);
-            const innerRadius = outerRadius / 2;
-            ctx.beginPath();
-            for (let i = 0; i < 2 * points; i++) {
-              const angle = Math.PI / points * i - Math.PI / 2;
-              const r = i % 2 === 0 ? outerRadius : innerRadius;
-              const x = startX + r * Math.cos(angle);
-              const y = startY + r * Math.sin(angle);
-              if (i === 0) {
-                ctx.moveTo(x, y);
-              } else {
-                ctx.lineTo(x, y);
-              }
-            }
-            ctx.closePath();
-            ctx.stroke();
-            break;
-          }
-          default:
-            break;
+      drawShape(tempCtx, startPos.x, startPos.y, currentX, currentY);
+      
+      // Show preview
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(tempCanvas, 0, 0);
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (!isDrawing) return;
+    
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    const endX = e.nativeEvent.offsetX;
+    const endY = e.nativeEvent.offsetY;
+
+    if (shape !== 'freehand') {
+      // Final draw for shapes
+      drawShape(ctx, startPos.x, startPos.y, endX, endY);
+    }
+
+    setIsDrawing(false);
+  };
+
+  const drawShape = (ctx, startX, startY, endX, endY) => {
+    ctx.beginPath();
+    
+    switch (shape) {
+      case 'rectangle':
+        ctx.strokeRect(startX, startY, endX - startX, endY - startY);
+        break;
+      case 'circle': {
+        const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        ctx.arc(startX, startY, radius, 0, 2 * Math.PI);
+        ctx.stroke();
+        break;
+      }
+      case 'line':
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        break;
+      case 'arrow': {
+        // Draw line
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX, endY);
+        ctx.stroke();
+        // Draw arrowhead
+        const angle = Math.atan2(endY - startY, endX - startX);
+        const headLength = 15;
+        ctx.beginPath();
+        ctx.moveTo(endX, endY);
+        ctx.lineTo(
+          endX - headLength * Math.cos(angle - Math.PI / 6),
+          endY - headLength * Math.sin(angle - Math.PI / 6)
+        );
+        ctx.lineTo(
+          endX - headLength * Math.cos(angle + Math.PI / 6),
+          endY - headLength * Math.sin(angle + Math.PI / 6)
+        );
+        ctx.closePath();
+        ctx.fill();
+        break;
+      }
+      case 'polygon': {
+        const sides = 5;
+        const radius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        const centerX = startX;
+        const centerY = startY;
+        ctx.moveTo(centerX + radius * Math.cos(0), centerY + radius * Math.sin(0));
+        for (let i = 1; i <= sides; i++) {
+          const theta = (i * 2 * Math.PI) / sides - Math.PI / 2;
+          ctx.lineTo(
+            centerX + radius * Math.cos(theta),
+            centerY + radius * Math.sin(theta)
+          );
         }
-        canvas.removeEventListener('mouseup', handleMouseUp);
-      };
-
-      canvas.addEventListener('mouseup', handleMouseUp);
+        ctx.closePath();
+        ctx.stroke();
+        break;
+      }
+      case 'star': {
+        const points = 5;
+        const outerRadius = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        const innerRadius = outerRadius / 2;
+        const centerX = startX;
+        const centerY = startY;
+        ctx.moveTo(
+          centerX + outerRadius * Math.cos(0 - Math.PI / 2),
+          centerY + outerRadius * Math.sin(0 - Math.PI / 2)
+        );
+        for (let i = 0; i <= 2 * points; i++) {
+          const angle = (i * Math.PI) / points - Math.PI / 2;
+          const radius = i % 2 === 0 ? outerRadius : innerRadius;
+          ctx.lineTo(
+            centerX + radius * Math.cos(angle),
+            centerY + radius * Math.sin(angle)
+          );
+        }
+        ctx.closePath();
+        ctx.stroke();
+        break;
+      }
+      default:
+        break;
     }
   };
 
   const clearCanvas = () => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#FFFFFF';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
     setError(null);
   };
 
@@ -196,7 +245,7 @@ const SketchPage = () => {
 
   return (
     <div className="sketch-app">
-      <header className="app-header">
+<header className="app-header">
         <div className="header-content">
           <h1 className="logo" onClick={() => navigate('/')}>Sketch It</h1>
           <nav className="nav-links">
@@ -273,6 +322,9 @@ const SketchPage = () => {
               height={650}
               className="drawing-canvas"
               onMouseDown={handleMouseDown}
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
             />
             <button 
               className="analyze-btn" 
@@ -322,5 +374,6 @@ const SketchPage = () => {
     </div>
   );
 };
+
 
 export default SketchPage;
