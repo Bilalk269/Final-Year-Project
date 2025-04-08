@@ -14,6 +14,7 @@ const SketchPage = () => {
   const navigate = useNavigate();
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState({ x: 0, y: 0 });
+  const [hasDrawn, setHasDrawn] = useState(false);
 
   // Initialize canvas
   useEffect(() => {
@@ -91,6 +92,7 @@ const SketchPage = () => {
       drawShape(ctx, startPos.x, startPos.y, endX, endY);
     }
 
+    setHasDrawn(true);
     setIsDrawing(false);
   };
 
@@ -184,6 +186,7 @@ const SketchPage = () => {
     ctx.fillStyle = '#FFFFFF';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     setError(null);
+    setHasDrawn(false);
   };
 
   const createWhiteBackgroundImage = () => {
@@ -199,6 +202,12 @@ const SketchPage = () => {
   };
 
   const handleAnalyze = async () => {
+    if (!hasDrawn) {
+      setError('Please draw something before analyzing');
+      setRetrievedImages([]);
+      return;
+    }
+
     setIsLoading(true);
     setError(null);
     
@@ -236,6 +245,11 @@ const SketchPage = () => {
   };
 
   const downloadSketch = () => {
+    if (!hasDrawn) {
+      setError('Please draw something before downloading');
+      return;
+    }
+    
     const tempCanvas = createWhiteBackgroundImage();
     const link = document.createElement('a');
     link.href = tempCanvas.toDataURL('image/png');
@@ -245,13 +259,13 @@ const SketchPage = () => {
 
   return (
     <div className="sketch-app">
-<header className="app-header">
+      <header className="app-header">
         <div className="header-content">
           <h1 className="logo" onClick={() => navigate('/')}>Sketch It</h1>
           <nav className="nav-links">
             <button className="nav-btn" onClick={() => navigate('/')}>Home</button>
-            <button className="nav-btn" onClick={() => navigate('/upload-img')}>Upload Image</button>
             <button className="nav-btn active">Draw Sketch</button>
+            <button className="nav-btn" onClick={() => navigate('/upload-img')}>Upload Image</button>
             <button className="nav-btn" onClick={() => navigate('/generate_text')}>Generate Description</button>
             <button className="nav-btn" onClick={() => navigate('/edit_image')}>Edit Image</button>
           </nav>
@@ -329,7 +343,7 @@ const SketchPage = () => {
             <button 
               className="analyze-btn" 
               onClick={handleAnalyze}
-              disabled={isLoading}
+              disabled={isLoading || !hasDrawn}
             >
               {isLoading ? 'Analyzing...' : 'Analyze Sketch'}
             </button>
@@ -374,6 +388,5 @@ const SketchPage = () => {
     </div>
   );
 };
-
 
 export default SketchPage;
