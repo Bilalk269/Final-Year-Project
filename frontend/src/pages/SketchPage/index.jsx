@@ -57,8 +57,6 @@ const SketchPage = () => {
       ctx.lineTo(currentX, currentY);
       ctx.stroke();
     } else {
-      // For shapes, we'll redraw on mouse up
-      // Clear and redraw temporarily during mouse move for preview
       const tempCanvas = document.createElement('canvas');
       tempCanvas.width = canvas.width;
       tempCanvas.height = canvas.height;
@@ -73,7 +71,6 @@ const SketchPage = () => {
 
       drawShape(tempCtx, startPos.x, startPos.y, currentX, currentY);
       
-      // Show preview
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(tempCanvas, 0, 0);
     }
@@ -88,7 +85,6 @@ const SketchPage = () => {
     const endY = e.nativeEvent.offsetY;
 
     if (shape !== 'freehand') {
-      // Final draw for shapes
       drawShape(ctx, startPos.x, startPos.y, endX, endY);
     }
 
@@ -115,11 +111,9 @@ const SketchPage = () => {
         ctx.stroke();
         break;
       case 'arrow': {
-        // Draw line
         ctx.moveTo(startX, startY);
         ctx.lineTo(endX, endY);
         ctx.stroke();
-        // Draw arrowhead
         const angle = Math.atan2(endY - startY, endX - startX);
         const headLength = 15;
         ctx.beginPath();
@@ -203,7 +197,7 @@ const SketchPage = () => {
 
   const handleAnalyze = async () => {
     if (!hasDrawn) {
-      setError('Please draw something before analyzing');
+      setError('Please draw something on the canvas before analyzing');
       setRetrievedImages([]);
       return;
     }
@@ -217,7 +211,7 @@ const SketchPage = () => {
       const blob = await (await fetch(imageData)).blob();
       const formData = new FormData();
       formData.append('image', blob, 'sketch.png');
-      formData.append('threshold', 0.20);
+      formData.append('threshold', 0.29);
 
       const response = await fetch('http://localhost:5000/find_similar', {
         method: 'POST',
@@ -233,11 +227,11 @@ const SketchPage = () => {
         setRetrievedImages(data.similar_images);
       } else {
         setRetrievedImages([]);
-        setError('No similar images found');
+        setError('No similar images found. Try drawing something different.');
       }
     } catch (err) {
       console.error('Error fetching similar images:', err);
-      setError(err.message || 'Failed to analyze sketch');
+      setError('Failed to analyze sketch. Please try again.');
       setRetrievedImages([]);
     } finally {
       setIsLoading(false);
@@ -246,7 +240,7 @@ const SketchPage = () => {
 
   const downloadSketch = () => {
     if (!hasDrawn) {
-      setError('Please draw something before downloading');
+      setError('Please draw something on the canvas before downloading');
       return;
     }
     
@@ -264,8 +258,8 @@ const SketchPage = () => {
           <h1 className="logo" onClick={() => navigate('/')}>Sketch It</h1>
           <nav className="nav-links">
             <button className="nav-btn" onClick={() => navigate('/')}>Home</button>
-            <button className="nav-btn active">Draw Sketch</button>
             <button className="nav-btn" onClick={() => navigate('/upload-img')}>Upload Image</button>
+            <button className="nav-btn active">Draw Sketch</button>
             <button className="nav-btn" onClick={() => navigate('/generate_text')}>Generate Description</button>
             <button className="nav-btn" onClick={() => navigate('/edit_image')}>Edit Image</button>
           </nav>
@@ -340,13 +334,26 @@ const SketchPage = () => {
               onMouseUp={handleMouseUp}
               onMouseLeave={handleMouseUp}
             />
-            <button 
-              className="analyze-btn" 
-              onClick={handleAnalyze}
-              disabled={isLoading || !hasDrawn}
-            >
-              {isLoading ? 'Analyzing...' : 'Analyze Sketch'}
-            </button>
+            <div className="canvas-actions">
+              <button 
+                className={`analyze-btn ${!hasDrawn ? 'disabled-btn' : ''}`} 
+                onClick={handleAnalyze}
+                disabled={isLoading}
+              >
+                {isLoading ? (
+                  <>
+                    <span className="spinner"></span> Analyzing...
+                  </>
+                ) : (
+                  'Analyze Sketch'
+                )}
+              </button>
+              {error && (
+                <div className="error-message">
+                  <span className="error-icon">⚠️</span> {error}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -356,10 +363,6 @@ const SketchPage = () => {
             <div className="loading-state">
               <div className="spinner"></div>
               <p>Searching for similar images...</p>
-            </div>
-          ) : error ? (
-            <div className="error-state">
-              <p className="error-message">{error}</p>
             </div>
           ) : retrievedImages.length > 0 ? (
             <div className="image-grid">
@@ -379,8 +382,14 @@ const SketchPage = () => {
             </div>
           ) : (
             <div className="empty-state">
-              <h3>No results yet</h3>
-              <p>Draw a sketch and click "Analyze" to find similar images</p>
+              {error ? (
+                <p className="error-text">{error}</p>
+              ) : (
+                <>
+                  <h3>No results yet</h3>
+                  <p>Draw a sketch and click "Analyze" to find similar images</p>
+                </>
+              )}
             </div>
           )}
         </div>
